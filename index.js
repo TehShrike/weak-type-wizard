@@ -57,13 +57,27 @@ function Caster(types, defaults, castFunctions) {
 	cast.extend = function extendCaster(options) {
 		var newDefaults = options.default
 		delete options.default
+
 		var newCastFunctions = options.cast
 		delete options.cast
+
 		var newTypes = convertInputTypes(options)
+
 		return new Caster(
 			extend(true, {}, types, newTypes),
 			extend(true, {}, defaults, newDefaults),
 			extend(true, {}, defaultCastFunctions, castFunctions, newCastFunctions))
+	}
+
+	cast.getLevelUpEncoding = function getLevelUpEncoding() {
+		return {
+			buffer: false,
+			type: 'weak-type-wizard',
+			encode: JSON.stringify,
+			decode: function decode(json) {
+				return cast(JSON.parse(json))
+			}
+		}
 	}
 
 	return cast

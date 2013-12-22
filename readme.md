@@ -5,7 +5,6 @@ More documentation to follow later I imagine, once I've implemented this in some
 Todo
 =====
 - Examples and real documentation, duh
-- Make the type coercion extensible mebbe
 
 License
 =====
