@@ -36,11 +36,11 @@ function optionsArrayToTypesObject(arr, type) {
 	}
 }
 
-function castAllProperties(types, obj) {
+function castAllProperties(types, obj, casters) {
 	Object.keys(obj).filter(function (propertyName) {
 		return typeof types[propertyName] !== 'undefined'
 	}).forEach(function (propertyName) {
-		var coerce = defaultCastFunctions[types[propertyName]]
+		var coerce = casters[types[propertyName]]
 		if (typeof coerce === 'function') {
 			obj[propertyName] = coerce(obj[propertyName])
 		}
@@ -48,17 +48,22 @@ function castAllProperties(types, obj) {
 	return obj
 }
 
-function Caster(types, defaults) {
+function Caster(types, defaults, castFunctions) {
 	var cast = function cast(obj) {
 		var withDefaults = extend(true, {}, defaults, obj)
-		return castAllProperties(types, withDefaults)
+		return castAllProperties(types, withDefaults, castFunctions)
 	}
 
 	cast.extend = function extendCaster(options) {
 		var newDefaults = options.default
 		delete options.default
+		var newCastFunctions = options.cast
+		delete options.cast
 		var newTypes = convertInputTypes(options)
-		return new Caster(extend(true, {}, types, newTypes), extend(true, {}, defaults, newDefaults))
+		return new Caster(
+			extend(true, {}, types, newTypes),
+			extend(true, {}, defaults, newDefaults),
+			extend(true, {}, defaultCastFunctions, castFunctions, newCastFunctions))
 	}
 
 	return cast
