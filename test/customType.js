@@ -1,5 +1,6 @@
 var test = require('tap').test
 var Wizard = require('../')
+var isDate = require('util').isDate
 
 test("a custom typecast", function(t) {
 	function castToExciting(input) {
@@ -56,6 +57,36 @@ test("deep magic", function(t) {
 	var cast = wizard(toCast)
 
 	t.equal(cast.digits, 13, 'Cast to number and stuff')
+	t.ok(isDate(cast.sub.me), 'sub.me is a date')
+	t.similar(cast.sub.me, new Date("2013-12-12"), "Cast the date properly")
+
+	t.end()
+})
+
+test("deep magic with a bit easier syntax", function(t) {
+	var schema = {
+		number: 'digits',
+		objectWithADateParameterNamedMe: 'sub',
+		cast: {
+			objectWithADateParameterNamedMe: {
+				date: 'me'
+			}
+		}
+	}
+
+	var toCast = {
+		digits: '13',
+		sub: {
+			me: "2013-12-12"
+		}
+	}
+
+	var wizard = new Wizard(schema)
+
+	var cast = wizard(toCast)
+
+	t.equal(cast.digits, 13, 'Cast to number and stuff')
+	t.ok(isDate(cast.sub.me), 'sub.me is a date')
 	t.similar(cast.sub.me, new Date("2013-12-12"), "Cast the date properly")
 
 	t.end()

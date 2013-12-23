@@ -48,6 +48,10 @@ function castAllProperties(types, obj, casters) {
 	return obj
 }
 
+function convertCastObjectsToFunctionsIfNecessary(caster, object) {
+	return typeof object === 'function' ? object : caster.extend(object)
+}
+
 function Caster(types, defaults, castFunctions) {
 	var cast = function cast(obj) {
 		var withDefaults = extend(true, {}, defaults, obj)
@@ -60,6 +64,12 @@ function Caster(types, defaults, castFunctions) {
 
 		var newCastFunctions = options.cast
 		delete options.cast
+
+		if (typeof newCastFunctions === 'object') {
+			Object.keys(newCastFunctions).forEach(function(key) {
+				newCastFunctions[key] = convertCastObjectsToFunctionsIfNecessary(cast, newCastFunctions[key])
+			})
+		}
 
 		var newTypes = convertInputTypes(options)
 
