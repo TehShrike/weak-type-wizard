@@ -1,4 +1,4 @@
-https://travis-ci.org/TehShrike/weak-type-wizard.svg
+![Travis CI](https://travis-ci.org/TehShrike/weak-type-wizard.svg)
 
 Takes an object and makes a new object using provided defaults, with properties cast to correct types.
 
