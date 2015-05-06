@@ -1,5 +1,7 @@
 A small schema enforcer that attempts to cast the properties of an object to the types you want 'em to be.
 
+![Travis CI](https://travis-ci.org/TehShrike/weak-type-wizard.svg)
+
 # Example
 
 ```js
