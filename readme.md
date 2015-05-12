@@ -5,8 +5,7 @@ A small schema enforcer that attempts to cast the properties of an object to the
 # Example
 
 ```js
-
-var Wizard = require('./')
+var Wizard = require('weak-type-wizard')
 
 var cast = new Wizard({
 	boolean: 'sexy',
@@ -20,7 +19,7 @@ cast({
 	devil: "667",
 	one: 1,
 	two: "200"
-}) // => { sexy: true, devil: 667, one: 1, two: 200 }
+}) // => { sexy: true, devil: 667, one: '1', two: '200' }
 
 ```
 
