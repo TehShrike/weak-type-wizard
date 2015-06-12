@@ -1,4 +1,4 @@
-var extend = require('extend')
+var extend = require('xtend')
 
 var defaultCastFunctions = {
 	boolean: function(value) {
@@ -19,7 +19,7 @@ var defaultCastFunctions = {
 
 function convertInputTypes(typeOptions) {
 	return Object.keys(typeOptions).reduce(function(memo, property) {
-		return extend(true, memo, optionsArrayToTypesObject(typeOptions[property], property))
+		return extend(memo, optionsArrayToTypesObject(typeOptions[property], property))
 	}, {})
 }
 
@@ -36,34 +36,36 @@ function optionsArrayToTypesObject(arr, type) {
 	}
 }
 
-function castAllProperties(types, obj, casters) {
-	Object.keys(obj).filter(function (propertyName) {
-		return typeof types[propertyName] !== 'undefined'
-	}).forEach(function (propertyName) {
-		var coerce = casters[types[propertyName]]
-		if (typeof coerce === 'function') {
-			obj[propertyName] = coerce(obj[propertyName])
+function castAllProperties(types, obj, casters, defaults, doNotLogError) {
+	var copy = extend(defaults, obj)
+	Object.keys(copy).forEach(function (propertyName) {
+		var type = types[propertyName]
+		if (type && typeof casters[type] === 'function') {
+			var coerce = casters[type]
+			try {
+				copy[propertyName] = coerce(copy[propertyName])
+			} catch(e) {
+				delete copy[propertyName]
+				if (!doNotLogError) {
+					console.error(e)
+				}
+			}
 		}
 	})
-	return obj
+	return copy
 }
 
 function convertCastObjectsToFunctionsIfNecessary(caster, object) {
 	return typeof object === 'function' ? object : caster.extend(object)
 }
 
-function Caster(types, defaults, castFunctions) {
-	var cast = function cast(obj) {
-		var withDefaults = extend(true, {}, defaults, obj)
-		return castAllProperties(types, withDefaults, castFunctions)
+function Caster(types, defaults, castFunctions, doNotLogError) {
+	function cast(obj) {
+		return castAllProperties(types, obj, castFunctions, defaults, doNotLogError)
 	}
 
-	cast.extend = function extendCaster(options) {
-		var newDefaults = options.default
-		delete options.default
-
-		var newCastFunctions = options.cast
-		delete options.cast
+	cast.extend = function extendCaster(options, doNotLogErrorOverride) {
+		var newCastFunctions = extend(options.cast || {})
 
 		if (typeof newCastFunctions === 'object') {
 			Object.keys(newCastFunctions).forEach(function(key) {
@@ -71,12 +73,16 @@ function Caster(types, defaults, castFunctions) {
 			})
 		}
 
-		var newTypes = convertInputTypes(options)
+		var newTypes = convertInputTypes(extend(options))
+		delete newTypes.default
+		delete newTypes.cast
 
 		return new Caster(
-			extend(true, {}, types, newTypes),
-			extend(true, {}, defaults, newDefaults),
-			extend(true, {}, defaultCastFunctions, castFunctions, newCastFunctions))
+			extend(types, newTypes),
+			extend(defaults, options.default),
+			extend(castFunctions, newCastFunctions),
+			doNotLogErrorOverride || doNotLogError
+		)
 	}
 
 	cast.getLevelUpEncoding = function getLevelUpEncoding() {
@@ -93,8 +99,8 @@ function Caster(types, defaults, castFunctions) {
 	return cast
 }
 
-var defaultCaster = new Caster({}, {})
+var defaultCaster = new Caster({}, {}, defaultCastFunctions, false)
 
-module.exports = function Wizard(options) {
-	return defaultCaster.extend(options)
+module.exports = function Wizard(options, doNotLogError) {
+	return defaultCaster.extend(options, doNotLogError || false)
 }
