@@ -1,10 +1,10 @@
-var test = require('tap').test
+var test = require('tape')
 var Wizard = require('../')
 var isDate = require('util').isDate
 
-test("a custom typecast", function(t) {
+test('a custom typecast', function(t) {
 	function castToExciting(input) {
-		return "!" + input + "!"
+		return '!' + input + '!'
 	}
 
 	var wizard = new Wizard({
@@ -21,9 +21,9 @@ test("a custom typecast", function(t) {
 	})
 
 	var toCast = {
-		dateProperty: "Thu Oct 31 2013 01:02:06 GMT+0000 (UTC)",
+		dateProperty: 'Thu Oct 31 2013 01:02:06 GMT+0000 (UTC)',
 		someString: "I'm a string!",
-		someNumber: "13",
+		someNumber: '13',
 		butts: 'hullo'
 	}
 
@@ -34,7 +34,7 @@ test("a custom typecast", function(t) {
 	t.end()
 })
 
-test("deep magic", function(t) {
+test('deep magic', function(t) {
 	var schema = {
 		number: 'digits',
 		objectWithADateParameterNamedMe: 'sub',
@@ -48,7 +48,7 @@ test("deep magic", function(t) {
 	var toCast = {
 		digits: '13',
 		sub: {
-			me: "2013-12-12"
+			me: '2013-12-12'
 		}
 	}
 
@@ -58,12 +58,12 @@ test("deep magic", function(t) {
 
 	t.equal(cast.digits, 13, 'Cast to number and stuff')
 	t.ok(isDate(cast.sub.me), 'sub.me is a date')
-	t.similar(cast.sub.me, new Date("2013-12-12"), "Cast the date properly")
+	t.equal(cast.sub.me.getTime(), new Date('2013-12-12').getTime(), 'Cast the date properly')
 
 	t.end()
 })
 
-test("deep magic with a bit easier syntax", function(t) {
+test('deep magic with a bit easier syntax', function(t) {
 	var schema = {
 		number: 'digits',
 		objectWithADateParameterNamedMe: 'sub',
@@ -77,7 +77,7 @@ test("deep magic with a bit easier syntax", function(t) {
 	var toCast = {
 		digits: '13',
 		sub: {
-			me: "2013-12-12"
+			me: '2013-12-12'
 		}
 	}
 
@@ -87,7 +87,7 @@ test("deep magic with a bit easier syntax", function(t) {
 
 	t.equal(cast.digits, 13, 'Cast to number and stuff')
 	t.ok(isDate(cast.sub.me), 'sub.me is a date')
-	t.similar(cast.sub.me, new Date("2013-12-12"), "Cast the date properly")
+	t.equal(cast.sub.me.getTime(), new Date('2013-12-12').getTime(), 'Cast the date properly')
 
 	t.end()
 })
