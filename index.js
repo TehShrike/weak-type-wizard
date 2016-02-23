@@ -13,7 +13,11 @@ var defaultCastFunctions = {
 		return value.toString()
 	},
 	date: function(value) {
-		return new Date(value)
+		try {
+			return new Date(value)
+		} catch (e) {
+			return new Date(value + 'T00:00:00.000Z')
+		}
 	}
 }
 
