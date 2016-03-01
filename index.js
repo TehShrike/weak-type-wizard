@@ -1,5 +1,9 @@
 var extend = require('xtend')
 
+function isNaN(n) {
+	return n !== n
+}
+
 var defaultCastFunctions = {
 	boolean: function(value) {
 		return value.toString().toLowerCase() !== 'false'
@@ -13,7 +17,10 @@ var defaultCastFunctions = {
 		return value.toString()
 	},
 	date: function(value) {
-		return new Date(value)
+		var date = new Date(value)
+		if (!isNaN(date.valueOf())) {
+			return date
+		}
 	}
 }
 
