@@ -2,10 +2,23 @@ A small schema enforcer that attempts to cast the properties of an object to the
 
 ![Travis CI](https://travis-ci.org/TehShrike/weak-type-wizard.svg)
 
+# Install
+
+```sh
+npm install weak-type-wizard
+```
+
+```
+var Wizard = require('weak-type-wizard')
+```
+
 # Example
 
+<!-- js
+var Wizard = require('.')
+-->
+
 ```js
-var Wizard = require('weak-type-wizard')
 
 var cast = new Wizard({
 	boolean: 'sexy',
@@ -49,6 +62,8 @@ var wizard = new Wizard({
 Use a wizard as a LevelUP encoding - serialize the objects to JSON, and get them back out with all of the parameters cast to whatever you like.  Example:
 
 ```js
+
+var levelmem = require('level-mem')
 
 var wizard = new Wizard({
 	date: ['dateProperty'],
