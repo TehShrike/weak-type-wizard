@@ -15,7 +15,7 @@ var Wizard = require('weak-type-wizard')
 # Example
 
 <!-- js
-var Wizard = require('.')
+var Wizard = require('./')
 -->
 
 ```js
